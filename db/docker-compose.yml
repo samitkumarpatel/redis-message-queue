@@ -12,3 +12,12 @@ services:
     # environment:
     #   MONGO_INITDB_ROOT_USERNAME: root
     #   MONGO_INITDB_ROOT_PASSWORD: example
+  
+  # calculator-api:
+  #   image: "samitkumarpatel/calculator-api:latest"
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379

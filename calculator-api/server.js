@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const PORT = 3000;
+const HOST = 'localhost';
 
 //bodyparser
 const bodyParser = require('body-parser')
@@ -18,11 +19,13 @@ const client = redis.createClient({
     host : process.env.REDIS_HOST,
     port : process.env.REDIS_PORT,
     password : process.env.REDIS_PASSWORD,
-    db : process.env.REDIS_DB
+    db : process.env.REDIS_DB,
+    connect_timeout: 2000
 });
 
 client.on("error", function(error) {
   console.error(error);
+  //throw new Error(error)
 });
 
 
@@ -38,15 +41,28 @@ app.post('/calculator', (req, res, next) => {
         key: key,
         args: args,
         value: value
-      })
+      }),(err, reply) => { 
+          res.status(200).json(
+            {
+              result: value,
+              queueStatus : err ? 500 : 200,
+              message: err ? err.message : reply
+            }
+          )
+      }
     );
+
     
-    //respond to api
-    res.status(200).json({
-      value : value
-    })
 })
 
-app.listen(port, () => {
-  console.log(`calculator api listening at http://localhost:${port}`)
+app.use(function (err, req, res, next) {
+  console.error(err.stack)
+  res.status(500).json(
+    { 
+      message: err.message
+    }
+  )
 })
+
+app.listen(PORT, HOST);
+console.log(`Calculator-api running on http://${HOST}:${PORT}`);

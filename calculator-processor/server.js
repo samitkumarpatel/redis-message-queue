@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
-const port = 3001
+const PORT = 3001;
+const HOST = '0.0.0.0';
 
 //bodyparser
 const bodyParser = require('body-parser')
@@ -14,7 +15,8 @@ const client = redis.createClient({
     host : process.env.REDIS_HOST,
     port : process.env.REDIS_PORT,
     password : process.env.REDIS_PASSWORD,
-    db : process.env.REDIS_DB
+    db : process.env.REDIS_DB,
+    connect_timeout: 2000
 });
 
 client.on("error", function(error) {
@@ -23,7 +25,9 @@ client.on("error", function(error) {
 
 //mongo
 const MongoClient = require('mongodb').MongoClient;
-const url = 'mongodb://localhost:27017/math';
+const mongo_host = process.env.MONGODB_HOST || "localhost"
+const mongo_port = process.env.MONGODB_PORT || "27017"
+const url = 'mongodb://'+mongo_host+':'+process.env.MONGODB_PORT+'/math';
 
 client.on("message", function(channel, message) {
     console.log("Subscriber received message in channel '" + channel + "': " + message);
@@ -56,6 +60,5 @@ client.on("message", function(channel, message) {
 }); 
 client.subscribe("math");
 
-app.listen(port, () => {
-    console.log(`calculator processor listening at http://localhost:${port}`)
-})
+app.listen(PORT, HOST);
+console.log(`Calculator-processor running on http://${HOST}:${PORT}`);
