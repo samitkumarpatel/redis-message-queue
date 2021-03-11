@@ -28,6 +28,11 @@ client.on("error", function(error) {
   //throw new Error(error)
 });
 
+app.get('/ping',(req,res,next) => {
+    res.json({
+       message: "pong"
+    })
+})
 
 app.post('/calculator', (req, res, next) => {
     const { args } = req.body
